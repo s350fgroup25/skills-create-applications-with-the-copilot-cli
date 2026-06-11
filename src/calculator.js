@@ -2,15 +2,19 @@
 
 // Node.js CLI Calculator
 // Supported operations: addition (add), subtraction (subtract), multiplication (multiply), division (divide)
+// Additional operations added per issue: modulo (mod), power (pow), square root (sqrt)
 // Usage examples:
 //   node src/calculator.js add 1 2 3
 //   node src/calculator.js subtract 10 3 2
 //   node src/calculator.js multiply 2.5 4
 //   node src/calculator.js divide 10 2
+//   node src/calculator.js mod 10 3
+//   node src/calculator.js pow 2 8
+//   node src/calculator.js sqrt 9
 
 function showUsage() {
   console.error('Usage: node src/calculator.js <operation> <num1> <num2> [num3 ...]');
-  console.error('Operations: add, subtract, multiply, divide');
+  console.error('Operations: add, subtract, multiply, divide, mod, pow, sqrt');
 }
 
 function parseOperands(rawOperands) {
@@ -46,6 +50,24 @@ function doDivide(nums) {
   }
   if (nums.length === 1) return nums[0];
   return nums.slice(1).reduce((acc, v) => acc / v, nums[0]);
+}
+
+// New functions requested in issue #3
+// modulo(a, b) - returns the remainder of a divided by b
+function modulo(a, b) {
+  if (b === 0) throw new Error('Modulo by zero');
+  return a % b;
+}
+
+// power(base, exponent) - returns base raised to the exponent
+function power(base, exponent) {
+  return Math.pow(base, exponent);
+}
+
+// squareRoot(n) - returns the square root of n with error handling for negative numbers
+function squareRoot(n) {
+  if (n < 0) throw new Error('Square root of negative number');
+  return Math.sqrt(n);
 }
 
 function main(argv) {
@@ -84,6 +106,33 @@ function main(argv) {
       case '÷':
         result = doDivide(operands);
         break;
+      case 'mod':
+      case 'modulo':
+      case '%':
+        if (operands.length < 2) {
+          console.error('Error: modulo requires two operands');
+          process.exit(1);
+        }
+        result = modulo(operands[0], operands[1]);
+        break;
+      case 'pow':
+      case 'power':
+      case '^':
+        if (operands.length < 2) {
+          console.error('Error: power requires base and exponent');
+          process.exit(1);
+        }
+        result = power(operands[0], operands[1]);
+        break;
+      case 'sqrt':
+      case 'squareroot':
+      case 'squareroot':
+        // apply square root sequentially if multiple operands provided
+        result = operands.reduce((acc, v, i) => {
+          if (i === 0) return squareRoot(v);
+          return squareRoot(acc);
+        }, null);
+        break;
       default:
         console.error(`Error: unknown operation '${op}'`);
         showUsage();
@@ -113,6 +162,9 @@ module.exports = {
   doMultiply,
   doSubtract,
   doDivide,
+  modulo,
+  power,
+  squareRoot,
   main
 };
 

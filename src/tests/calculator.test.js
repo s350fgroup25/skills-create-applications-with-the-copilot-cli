@@ -1,4 +1,4 @@
-const { parseOperands, doAdd, doMultiply, doSubtract, doDivide } = require('../calculator');
+const { parseOperands, doAdd, doMultiply, doSubtract, doDivide, modulo, power, squareRoot } = require('../calculator');
 
 describe('Calculator core functions', () => {
   test('addition: 2 + 3 = 5', () => {
@@ -55,5 +55,39 @@ describe('Calculator core functions', () => {
 
   test('subtract single operand returns the operand', () => {
     expect(doSubtract([7])).toBe(7);
+  });
+
+  // --- Extended operations tests ---
+
+  test('modulo: 5 % 2 = 1', () => {
+    expect(modulo(5, 2)).toBe(1);
+  });
+
+  test('modulo: negative dividend -5 % 2 = -1 (JS semantics)', () => {
+    expect(modulo(-5, 2)).toBe(-1);
+  });
+
+  test('modulo by zero should throw', () => {
+    expect(() => modulo(10, 0)).toThrow('Modulo by zero');
+  });
+
+  test('power: 2 ^ 3 = 8', () => {
+    expect(power(2, 3)).toBe(8);
+  });
+
+  test('power with negative exponent: 2 ^ -2 = 0.25', () => {
+    expect(power(2, -2)).toBeCloseTo(0.25, 12);
+  });
+
+  test('squareRoot: sqrt(16) = 4', () => {
+    expect(squareRoot(16)).toBe(4);
+  });
+
+  test('squareRoot of non-perfect square: sqrt(2) ~= 1.414', () => {
+    expect(squareRoot(2)).toBeCloseTo(Math.SQRT2, 12);
+  });
+
+  test('squareRoot of negative number should throw', () => {
+    expect(() => squareRoot(-4)).toThrow('Square root of negative number');
   });
 });
